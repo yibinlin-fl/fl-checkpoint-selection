@@ -1,0 +1,11 @@
+{
+  "git_revision": "0fe5599af8d7b28e76bdac710046570264455605",
+  "fnbench_upstream_sha": "838dff3023335c015dea07fa13dc42ca971d525d",
+  "fnbench_patch_sha256": "99240fcebbbabfde67bdb4a5f6455da54f93a5f1f33c0d08780c0d2d726c5a8d",
+  "torch": "2.12.0+cpu",
+  "backend": "FNBench original FedAvg components; external isolation adapter",
+  "dataset": "synthetic-debug",
+  "is_real_data": false,
+  "train_accesses_official_test": false,
+  "seed_control": "Python + NumPy + Torch; upstream main seeds NumPy only"
+}

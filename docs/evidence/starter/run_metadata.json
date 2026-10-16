@@ -1,0 +1,9 @@
+{
+  "git_revision": "0fe5599af8d7b28e76bdac710046570264455605",
+  "torch": "2.12.0+cpu",
+  "dataset": "synthetic-debug",
+  "is_real_data": false,
+  "scope": "standalone starter baseline; not official FNBench",
+  "train_accesses_validation": false,
+  "train_accesses_official_test": false
+}

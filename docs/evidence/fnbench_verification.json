@@ -1,0 +1,33 @@
+{
+  "output": "outputs\\phase0_fnbench_smoke_final_20261017",
+  "dataset": "SYNTHETIC DEBUG ONLY",
+  "rounds": 2,
+  "train_n": 72,
+  "validation_n": 24,
+  "independent_test_n": 32,
+  "validation_rows": 16,
+  "selections": 10,
+  "regret_rows": 12,
+  "checkpoint_sha256": {
+    "round_0001.pt": "e294dcca0a7dd16cd7b12f1e7c1aee2886d4cf0c466fffab54484a63c3921a33",
+    "round_0002.pt": "26c4de7c340929b6bd10afa0c3837284d668a37f488885fc82a98924f265b1c6"
+  },
+  "test_predictions": [
+    {
+      "round": "1",
+      "test_accuracy": "0.09375",
+      "n": "32",
+      "predictions_sha256": "d0740827fb7aa62668f363bd3d01e304b470e1651de1803cc452493ccbc08a68"
+    },
+    {
+      "round": "2",
+      "test_accuracy": "0.09375",
+      "n": "32",
+      "predictions_sha256": "b0c51c192c5e24e80e95dc4fee1b8525fe8d093c35f06f10b88cefc1f38fd748"
+    }
+  ],
+  "noise_only_replay": {
+    "other": "outputs\\phase0_fnbench_noise_replay_20261017",
+    "identical_splits_checkpoints_test_predictions": true
+  }
+}

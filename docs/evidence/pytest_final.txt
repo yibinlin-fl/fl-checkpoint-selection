@@ -1,0 +1,8 @@
+.............................                                            [100%]
+============================== warnings summary ===============================
+tests/test_fnbench.py::test_official_components_instrumentation_parity
+  D:\anaconda3\Lib\site-packages\torch\utils\data\dataloader.py:752: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+    super().__init__(loader)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+29 passed, 1 warning in 7.79s

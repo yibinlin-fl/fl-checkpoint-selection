@@ -1,0 +1,32 @@
+{
+  "dataset": "synthetic-debug",
+  "seed": 42,
+  "num_clients": 4,
+  "partition": "iid",
+  "dirichlet_alpha": 0.5,
+  "validation_fraction": 0.25,
+  "rounds": 2,
+  "checkpoint_every": 1,
+  "clients_per_round": 4,
+  "local_epochs": 1,
+  "batch_size": 8,
+  "learning_rate": 0.02,
+  "momentum": 0.0,
+  "model": "fnbench_resnet18",
+  "device": "cpu",
+  "num_workers": 0,
+  "synthetic_train_size": 96,
+  "synthetic_test_size": 32,
+  "heterogeneous_rates": [
+    0.6,
+    0.4,
+    0.2,
+    0.0
+  ],
+  "validation_noise_seed": 3031,
+  "ema_alpha": 0.6,
+  "output_dir": "outputs/phase0_fnbench_noise_replay_20261017",
+  "backend": "fnbench",
+  "weight_decay": 0.0005,
+  "training_label_noise_rate": 0.0
+}

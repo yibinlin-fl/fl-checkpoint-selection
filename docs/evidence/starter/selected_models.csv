@@ -1,0 +1,11 @@
+scenario,selector,selected_round,selection_score
+heterogeneous,last,2,
+heterogeneous,macro_noisy_acc,2,0.041666666666666664
+heterogeneous,weighted_noisy_acc,2,0.041666666666666664
+heterogeneous,weighted_noisy_ce,1,2.3087414503097534
+heterogeneous,ema_noisy_acc,2,0.024999999999999998
+uniform,last,2,
+uniform,macro_noisy_acc,2,0.125
+uniform,weighted_noisy_acc,2,0.125
+uniform,weighted_noisy_ce,1,2.302372376124064
+uniform,ema_noisy_acc,2,0.09166666666666666

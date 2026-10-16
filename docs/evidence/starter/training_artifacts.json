@@ -1,0 +1,6 @@
+{
+  "config_used.json": "18b58cc8ab08dfa4d1efd444be28fa79185b256120b2a664ac1c4e005adcf2b1",
+  "splits_manifest.json": "f3591eff6643718000d73ff306defed781c33a6df0bd379d8ea7d18bda076b13",
+  "checkpoints/round_0001.pt": "5115c5af71edfdd82206b7bc7d47d4bd50bbb1f30df2947c6d70ba6e015383d2",
+  "checkpoints/round_0002.pt": "375700e1f5c6d65c0d9874859348063172d5b1357380033afb455a7f47300417"
+}

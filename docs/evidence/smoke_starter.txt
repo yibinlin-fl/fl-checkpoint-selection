@@ -1,0 +1,12 @@
+[train] round=1/2 train_loss=2.3016
+[train] round=2/2 train_loss=2.2987
+Training complete; TEST SET NOT EVALUATED during training.
+[offline-evaluate] round=1 completed
+[offline-evaluate] round=2 completed
+Noisy validation only; official test not loaded.
+Selection complete. This module did NOT read private_audit files.
+[offline-evaluate] round=1 completed
+[offline-evaluate] round=2 completed
+Offline diagnostic audit complete.
+Audited decision table saved. Test oracle used AFTER all choices are fixed.
+Saved validation_accuracy.png

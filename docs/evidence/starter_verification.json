@@ -1,0 +1,29 @@
+{
+  "output": "outputs\\phase0_smoke_final_20261017",
+  "dataset": "SYNTHETIC DEBUG ONLY",
+  "rounds": 2,
+  "train_n": 72,
+  "validation_n": 24,
+  "independent_test_n": 32,
+  "validation_rows": 16,
+  "selections": 10,
+  "regret_rows": 12,
+  "checkpoint_sha256": {
+    "round_0001.pt": "5115c5af71edfdd82206b7bc7d47d4bd50bbb1f30df2947c6d70ba6e015383d2",
+    "round_0002.pt": "375700e1f5c6d65c0d9874859348063172d5b1357380033afb455a7f47300417"
+  },
+  "test_predictions": [
+    {
+      "round": "1",
+      "test_accuracy": "0.0",
+      "n": "32",
+      "predictions_sha256": "1c795e461505298319b33927763de2a604ea4f00da4ce3b463460caff19825c1"
+    },
+    {
+      "round": "2",
+      "test_accuracy": "0.09375",
+      "n": "32",
+      "predictions_sha256": "121ae2159ec62bf9611bba918d6d3b6e145647f601fd840b561e82b20c65057a"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "round": 1,
+    "clients": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "train_sample_counts": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "mean_client_train_loss": 2.459915041923523
+  },
+  {
+    "round": 2,
+    "clients": [
+      1,
+      2,
+      0,
+      3
+    ],
+    "train_sample_counts": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "mean_client_train_loss": 2.4154068380594254
+  }
+]

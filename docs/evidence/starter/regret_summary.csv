@@ -1,0 +1,13 @@
+scenario,selector,selected_round,selected_test_acc,oracle_best_test_acc,selection_regret_pp
+heterogeneous,last,2,0.09375,0.09375,0.0
+heterogeneous,macro_noisy_acc,2,0.09375,0.09375,0.0
+heterogeneous,weighted_noisy_acc,2,0.09375,0.09375,0.0
+heterogeneous,weighted_noisy_ce,1,0.0,0.09375,9.375
+heterogeneous,ema_noisy_acc,2,0.09375,0.09375,0.0
+uniform,last,2,0.09375,0.09375,0.0
+uniform,macro_noisy_acc,2,0.09375,0.09375,0.0
+uniform,weighted_noisy_acc,2,0.09375,0.09375,0.0
+uniform,weighted_noisy_ce,1,0.0,0.09375,9.375
+uniform,ema_noisy_acc,2,0.09375,0.09375,0.0
+diagnostic_only,clean_val_oracle,2,0.09375,0.09375,0.0
+diagnostic_only,test_oracle_upper_bound,2,0.09375,0.09375,0.0
