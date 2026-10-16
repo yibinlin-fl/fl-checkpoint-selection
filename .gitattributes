@@ -3,3 +3,4 @@
 *.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof
 # Preserve exact bytes of hashed runtime artifacts across Windows/Linux checkouts.
 docs/evidence/** -text whitespace=cr-at-eol
+docs/phase1a_evidence/** -text whitespace=cr-at-eol

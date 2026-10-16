@@ -72,3 +72,31 @@ def test_data_preparation_hash_tamper_rejected(tmp_path):
     (tmp_path/"prepared_artifacts.json").write_text(json.dumps({f.name:"wrong_digest"}))
     with pytest.raises(AssertionError,match="Prepared artifact changed"):
         verify_prepared_data(cfg,np.arange(10),{}, {})
+
+
+def test_real_cifar_frozen_indices_and_noise_mapping():
+    prepared = ROOT / "outputs/phase1a_cifar10_prepared_seed42"
+    if not (prepared / "prepared_artifacts.json").exists():
+        pytest.skip("Real CIFAR preparation not available")
+    from p1.artifacts import sha256
+    from p1.data import load_partition
+    cfg = config()
+    for filename, digest in json.loads((prepared / "prepared_artifacts.json").read_text()).items():
+        assert sha256(prepared / filename) == digest
+    with np.load(prepared / "source_indices.npz", allow_pickle=False) as indices:
+        tr = np.concatenate([indices[f"client_{c}_train"] for c in range(10)])
+        va = np.concatenate([indices[f"client_{c}_validation"] for c in range(10)])
+        assert len(tr) == 40000 and len(va) == 10000
+        assert len(np.unique(tr)) == 40000 and len(np.unique(va)) == 10000
+        assert not np.intersect1d(tr,va).size
+        assert np.array_equal(np.sort(np.concatenate([tr,va])),np.arange(50000))
+        assert np.array_equal(indices["official_test_indices"],np.arange(10000))
+    _, labels = load_partition(cfg, train=True)
+    mapping = json.loads((prepared/"private_audit/validation_labels.json").read_text())
+    manifest = json.loads((prepared/"splits_manifest.json").read_text())
+    for cid, entry in manifest["clients"].items():
+        assert np.array_equal(mapping["clean"][cid],labels[entry["validation_indices"]])
+    stats = json.loads((prepared/"dataset_statistics.json").read_text())
+    assert stats["model_evaluation_performed"] is False
+    assert stats["training_label_noise_rate"] == 0
+    assert stats["uniform_expected_validation_noise_rate"] == pytest.approx(.27448)

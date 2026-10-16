@@ -53,11 +53,15 @@ def summarize_cost(out_dir):
     times = [r["round_seconds"] for r in rows]
     if len(times) != cfg["rounds"] or any(t <= 0 for t in times):
         raise ValueError("Incomplete or invalid measured round timings")
-    steady = times[1:]  # Report warm-up separately; do not hide first-round cost.
-    estimate = times[0] + 119 * statistics.mean(steady)
+    save_times = [r.get("checkpoint_save_seconds", 0.) for r in rows]
+    compute_times = [total - save for total, save in zip(times, save_times)]
+    steady = compute_times[1:]  # Report warm-up separately; do not hide first-round cost.
+    estimate = compute_times[0] + 119 * statistics.mean(steady) + 24 * statistics.mean(save_times)
     report = {"gpu_training_measured": True, "round_seconds": times,
               "estimated_120_training_seconds": estimate,
-              "estimate_scope": "training with per-round checkpoint I/O; excludes offline validation/test, install and download",
+              "estimate_scope": "120 training rounds + 24 checkpoint writes; excludes offline validation/test, install and download",
+              "measured_checkpoint_save_seconds": save_times,
+              "gpu_memory_scope": "PyTorch per-training-round allocated/reserved peak; excludes other GPU processes",
               "steady_state_samples": len(steady), "short_smoke_estimate_only": True,
               "peak_gpu_allocated_bytes": max(r["peak_gpu_allocated_bytes"] for r in rows),
               "peak_gpu_reserved_bytes": max(r["peak_gpu_reserved_bytes"] for r in rows),
