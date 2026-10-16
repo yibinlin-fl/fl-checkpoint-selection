@@ -8,4 +8,5 @@ fi
 cd "$(dirname "$0")/.."
 python scripts/check_v100.py
 python scripts/prepare_fnbench.py
-python scripts/p1_cli.py all --config configs/phase0_v100.json
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+python scripts/p1_cli.py all --config configs/phase1b_v100.json

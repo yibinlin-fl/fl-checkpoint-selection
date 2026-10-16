@@ -3,6 +3,7 @@ import copy
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -55,6 +56,21 @@ def official_args(cfg):
     )
 
 
+def partition_and_holdout(labels, cfg):
+    """Use exactly the same official assignment for data preparation and training."""
+    upstream()
+    from data.partition import sample_iid, sample_dirichlet
+    if cfg["partition"] == "iid":
+        if len(labels) % cfg["num_clients"]:
+            raise ValueError("Official IID sampler would discard remainder")
+        assigned = sample_iid(labels, cfg["num_clients"])
+    else:
+        if len(labels) < 100 * cfg["num_clients"]:
+            raise ValueError("Official Dirichlet requires >=100 samples per client")
+        assigned = sample_dirichlet(labels, cfg["num_clients"], cfg["dirichlet_alpha"], 10)
+    return holdout_clients(labels, [assigned[i] for i in range(cfg["num_clients"])], cfg)
+
+
 def train_round(model, locals_, weights, args, selected):
     """Same order/calls as main_fed_LNL.py FedAvg branch."""
     losses = []
@@ -78,16 +94,23 @@ def train_round(model, locals_, weights, args, selected):
 def run_fnbench_training(cfg):
     from .training import set_seeds, git_revision
     pin = upstream()
-    from data.partition import sample_iid, sample_dirichlet
     from flcore.update import get_local_update_objects
     from flcore.federation import LocalModelWeights
     from utils.utils import noisify_label
     import random
 
     set_seeds(cfg["seed"])
+    if cfg.get("strict_determinism"):
+        import os
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+        torch.use_deterministic_algorithms(True)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     args = official_args(cfg)
+    if cfg.get("phase") == "phase1a":
+        from .phase1a import validate_phase1a_config, require_v100
+        validate_phase1a_config(cfg)
+        require_v100()
     if args.device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA unavailable")
     out = Path(cfg["output_dir"])
@@ -97,18 +120,13 @@ def run_fnbench_training(cfg):
     (out / "config_used.json").write_text(json.dumps({k: v for k, v in cfg.items() if not k.startswith("_")}, indent=2))
     images, labels = load_partition(cfg, train=True)
     # Preserve official sampler behavior, including its class-seeded Dirichlet.
-    if cfg["partition"] == "iid":
-        if len(labels) % cfg["num_clients"]:
-            raise ValueError("Official IID sampler would discard remainder")
-        assigned = sample_iid(labels, cfg["num_clients"])
-    else:
-        if len(labels) < 100 * cfg["num_clients"]:
-            raise ValueError("Official Dirichlet requires >=100 samples per client")
-        assigned = sample_dirichlet(labels, cfg["num_clients"], cfg["dirichlet_alpha"], 10)
-    train, val = holdout_clients(labels, [assigned[i] for i in range(cfg["num_clients"])], cfg)
+    train, val = partition_and_holdout(labels, cfg)
     if any(len(ids) < args.local_bs for ids in train.values()):
         raise ValueError("Official drop_last=True requires >=batch_size train samples per client")
     write_manifest(out, train, val, labels, cfg, test_size(cfg))
+    if cfg.get("prepared_data_dir"):
+        from .dataset_audit import verify_prepared_data
+        verify_prepared_data(cfg, labels, train, val)
     targets = labels.copy()
     # Reuse original FNBench fixed-rate training corruption; val labels unchanged.
     rate = cfg.get("training_label_noise_rate", 0.)
@@ -126,24 +144,46 @@ def run_fnbench_training(cfg):
         local.weight = copy.deepcopy(model.state_dict())
     logs = []
     for rnd in range(1, cfg["rounds"] + 1):
+        if args.device.type == "cuda":
+            torch.cuda.synchronize(args.device)
+            torch.cuda.reset_peak_memory_stats(args.device)
+        round_start = time.perf_counter()
         if rnd in cfg.get("schedule", []):
             args.lr *= cfg.get("lr_decay", .1)
         args.g_epoch = rnd - 1
         selected = np.random.choice(range(args.num_users), max(int(args.frac * args.num_users), 1), replace=False).tolist()
         losses = train_round(model, locals_, weights, args, selected)
-        logs.append({"round": rnd, "clients": selected, "train_sample_counts": [len(train[c]) for c in selected],
-                     "mean_client_train_loss": float(np.mean(losses))})
+        checkpoint_bytes, checkpoint_seconds = 0, 0.
         if rnd % cfg["checkpoint_every"] == 0 or rnd == cfg["rounds"]:
+            save_start = time.perf_counter()
+            path = out / "checkpoints" / f"round_{rnd:04d}.pt"
             torch.save({k: v.detach().cpu().clone() for k, v in model.state_dict().items()},
-                       out / "checkpoints" / f"round_{rnd:04d}.pt")
+                       path)
+            checkpoint_seconds = time.perf_counter() - save_start
+            checkpoint_bytes = path.stat().st_size
+        if args.device.type == "cuda":
+            torch.cuda.synchronize(args.device)
+        seconds = time.perf_counter() - round_start
+        effective_n = sum(len(train[c]) // args.local_bs * args.local_bs for c in selected) * args.local_ep
+        logs.append({"round": rnd, "clients": selected, "train_sample_counts": [len(train[c]) for c in selected],
+                     "mean_client_train_loss": float(np.mean(losses)), "round_seconds": seconds,
+                     "processed_train_examples": effective_n, "examples_per_second": effective_n / seconds,
+                     "checkpoint_bytes": checkpoint_bytes, "checkpoint_save_seconds": checkpoint_seconds,
+                     "peak_gpu_allocated_bytes": torch.cuda.max_memory_allocated(args.device) if args.device.type == "cuda" else None,
+                     "peak_gpu_reserved_bytes": torch.cuda.max_memory_reserved(args.device) if args.device.type == "cuda" else None})
         print(f"[FNBench FedAvg / {cfg['dataset']}] round={rnd} loss={np.mean(losses):.6f}", flush=True)
     (out / "train_log.json").write_text(json.dumps(logs, indent=2))
+    if cfg.get("phase") == "phase1a":
+        from .phase1a import verify_checkpoint_roundtrip
+        verify_checkpoint_roundtrip(model, cfg, images, targets, train[0],
+                                    out / "checkpoints" / f"round_{cfg['rounds']:04d}.pt", out)
     (out / "run_metadata.json").write_text(json.dumps({
         "git_revision": git_revision(), "fnbench_upstream_sha": pin["commit"],
         "fnbench_patch_sha256": sha256(ROOT / pin["patch"]), "torch": torch.__version__,
         "backend": "FNBench original FedAvg components; external isolation adapter",
         "dataset": cfg["dataset"], "is_real_data": cfg["dataset"] == "cifar10",
         "train_accesses_official_test": False, "seed_control": "Python + NumPy + Torch; upstream main seeds NumPy only",
+        "strict_determinism": bool(cfg.get("strict_determinism")),
     }, indent=2))
     record_training(out)
     return out
