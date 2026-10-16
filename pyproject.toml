@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "p1-fl-checkpoint-selection"
+version = "0.1.0"
+description = "Reproducible Phase-0 audit of checkpoint selection under heterogeneous validation label noise in FL"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "torch>=2.0", "torchvision>=0.15", "pillow>=9", "matplotlib>=3.6"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["p1*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
