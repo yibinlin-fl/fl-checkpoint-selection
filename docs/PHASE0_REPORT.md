@@ -17,7 +17,7 @@
 实际机器报告见 `evidence/environment.json`，现有开发环境包快照 `evidence/environment_packages.txt`（不是可跨平台直接安装的锁文件）。
 
 ## 实际测试结果
-1. 未修代码原12项测试：首次9 passed/3 errors，3项均为pytest默认临时目录无法创建；将TEMP/TMP改至工作区后 **12 passed in 5.04s**。原始独立starter两轮smoke成功，loss2.3016/2.2987；保留旧输出，不作为新结果。
+1. 未修代码原12项测试：首次9 passed/3 errors，3项均为pytest默认临时目录无法创建；将TEMP/TMP改至工作区后 **12 passed in 5.04s**。原始独立starter两轮smoke成功，loss2.3016/2.2987；原ZIP自带outputs/smoke被该基线重跑更新；加入输出保护后所有运行均使用新目录。
 2. 最终扩展测试 **29 passed，0 failed，0 skipped，7.79s**；1条官方DataLoader在CPU无accelerator时pin_memory无效的警告。见 `evidence/pytest_final.txt`。
 3. 独立starter最终两轮CPU smoke：train loss2.3016/2.2987；72 train、24 val、32独立synthetic test；2 checkpoints、16条public score、10项选择、12条事后regret记录。见 `evidence/smoke_starter.txt`、`starter_verification.json`。
 4. 官方FedAvg组件最终两轮CPU smoke：原生ResNet18、IID、4 clients、每轮全部参与、CE/SGD/weight_decay/drop_last/BN聚合使用上游实现；loss2.459915/2.415407，样本/记录数量同上。见 `evidence/smoke_fnbench.txt`、`fnbench_verification.json`。

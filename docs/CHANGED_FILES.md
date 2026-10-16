@@ -45,4 +45,4 @@
 - `tests/test_fnbench.py`
 - `tests/test_noise.py`
 
-另有最终报告 `docs/PHASE0_REPORT.md`、本清单和 `docs/evidence/` 下的真实日志/轻量结果快照。没有将大型checkpoint或vendor副本加入主仓库；按固定SHA与patch重建vendor。原ZIP已有 outputs/smoke 完整保留。
+另有最终报告 `docs/PHASE0_REPORT.md`、本清单和 `docs/evidence/` 下的真实日志/轻量结果快照。没有将大型checkpoint或vendor副本加入主仓库；按固定SHA与patch重建vendor。原ZIP自带 outputs/smoke 在最初的原始基线命令中被更新为本机基线重跑结果；加入保护后所有运行均使用新目录。

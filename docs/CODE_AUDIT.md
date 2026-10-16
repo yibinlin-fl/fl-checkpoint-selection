@@ -16,7 +16,7 @@
 6. 起始复用output会覆盖配置、混入陈旧checkpoint；改为非空目录拒绝训练。checkpoint集合/config/split哈希保存并在evaluate/audit验证；selected结果及scores哈希冻结，拒绝重选。
 7. 起始CLI --out只影响下游不影响train，现全流程一致；select用config_used里的EMA，避免后来修改原配置改变规则。
 8. 原图无synthetic警示；现显式 SYNTHETIC DEBUG ONLY。新train_log记录参与client及样本数。
-9. Windows pytest默认临时目录写失败，tests/conftest.py使用工作区内全新目录，不触发旧目录递归清理。未批量删除任何文件；保留旧ZIP输出。
+9. Windows pytest默认临时目录写失败，tests/conftest.py使用工作区内全新目录，不触发旧目录递归清理。未批量删除任何文件；原outputs/smoke最初由原始基线命令更新，后续运行均使用新目录。
 10. 官方与starter ResNet、normalization、weight_decay/drop_last、BN聚合不同，不能混称。正式配置切到官方组件；starter保留用于轻量调试。详见官方源码等价测试。
 11. 官方无全局保存、每轮test、缺torchtext、依赖配对错误及不完整seed控制已记录；只对无关AGNews导入加最小补丁，数据与checkpoint外部适配。
 
