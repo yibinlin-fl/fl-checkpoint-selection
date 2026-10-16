@@ -27,3 +27,18 @@ def test_uniform_symmetric_noise_ranking_expected_math():
     assert slope > 0
     def observed(acc): return slope*acc + eta/(c - 1)
     assert observed(0.8) > observed(0.7)
+
+
+def test_expected_accuracy_matches_explicit_transition_matrix():
+    # Independent enumeration, including the ranking boundary and reversal.
+    for c in (2, 10):
+        truth = np.arange(100) % c
+        pred = truth.copy()
+        pred[:30] = (pred[:30] + 1) % c
+        clean_acc = np.mean(pred == truth)
+        for eta in (0., .2, (c - 1) / c, 1.):
+            transition = np.full((c, c), eta / (c - 1))
+            np.fill_diagonal(transition, 1 - eta)
+            expected = np.mean(transition[truth, pred])
+            formula = (1 - c * eta / (c - 1)) * clean_acc + eta / (c - 1)
+            assert np.isclose(expected, formula)

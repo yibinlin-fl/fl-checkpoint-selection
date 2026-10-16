@@ -1,5 +1,6 @@
 """Optional diagnostic chart; no data-driven tuning or checkpoint choice."""
 import csv
+import json
 from collections import defaultdict
 from pathlib import Path
 
@@ -14,6 +15,8 @@ def run_plot(out_dir):
     series = defaultdict(lambda: defaultdict(list))
     for r in rows:
         series[r["scenario"]][int(r["round"])].append((float(r["noisy_acc"]), int(r["n"])))
+    cfg = json.loads((out / "config_used.json").read_text(encoding="utf-8"))
+    label = "SYNTHETIC DEBUG ONLY" if cfg["dataset"] == "synthetic-debug" else "CIFAR-10"
     fig, ax = plt.subplots(figsize=(8, 4.8))
     for scenario in sorted(series):
         rounds = sorted(series[scenario])
@@ -21,7 +24,7 @@ def run_plot(out_dir):
                   sum(n for a,n in series[scenario][rd]) for rd in rounds]
         ax.plot(rounds, scores, marker="o", label=scenario)
     ax.set(xlabel="Global checkpoint round", ylabel="Validation accuracy (observed)",
-           title="Same checkpoints, different validation label quality")
+           title=f"{label}: same checkpoints, validation label quality")
     ax.legend()
     ax.grid(alpha=0.2)
     fig.tight_layout()

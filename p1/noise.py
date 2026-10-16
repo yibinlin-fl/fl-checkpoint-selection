@@ -5,6 +5,8 @@ import numpy as np
 def flip_labels(labels, rate, classes, rng):
     """Each selected label is changed to one uniformly sampled *different* class."""
     labels = np.asarray(labels, dtype=np.int64)
+    if not 0 <= rate <= 1 or classes < 2 or np.any((labels < 0) | (labels >= classes)):
+        raise ValueError("Invalid noise rate/classes/labels")
     new = labels.copy()
     mask = rng.random(len(labels)) < rate
     offsets = rng.integers(1, classes, size=int(mask.sum()))

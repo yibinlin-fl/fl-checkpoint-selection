@@ -17,8 +17,13 @@
   "num_workers": 0,
   "synthetic_train_size": 96,
   "synthetic_test_size": 32,
-  "heterogeneous_rates": [0.0, 0.2, 0.4, 0.6],
+  "heterogeneous_rates": [
+    0.0,
+    0.2,
+    0.4,
+    0.6
+  ],
   "validation_noise_seed": 2031,
   "ema_alpha": 0.6,
-  "output_dir": "outputs/smoke"
+  "output_dir": "outputs/phase0_smoke_final_20261017"
 }

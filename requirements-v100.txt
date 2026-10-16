@@ -1,0 +1,8 @@
+# Candidate Linux/Python 3.10 environment. Install paired torch separately (docs/V100_RUNBOOK.md).
+numpy==1.26.4
+pillow==11.0.0
+matplotlib==3.9.2
+scikit-learn==1.3.1
+tqdm==4.67.1
+pytest==8.3.4
+six==1.17.0

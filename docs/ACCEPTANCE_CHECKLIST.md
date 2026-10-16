@@ -1,14 +1,16 @@
-# 验收清单（用户拿到 Codex 结果后逐项核对）
+# Phase-0 验收清单（2026-10-17）
 
-- [ ] 仓库有分支、环境报告、上游 FNBench commit；无联网时正确解释阻塞。
-- [ ] `python -m pytest -q` 完全通过。
-- [ ] CPU synthetic 2-round smoke 跑通；明确写“调试数据，不是科学证据”。
-- [ ] 真实 CIFAR-10 的 train/val/test ID 不重叠，train val indices 已固化。
-- [ ] 仅验证标签发生改变，同一训练轨迹、模型文件 SHA 和测试 predictions 不变。
-- [ ] `validation_scores.csv` 只有 uniform/heterogeneous 选择器字段，不含 clean-scenario、test truth、clean truth、真实注入噪声率。
-- [ ] `selected_models.csv` 不调用 `private_audit`、测试数据或原始干净标签。
-- [ ] `audit` 在选模结束后生成 selection regret；包含最后轮和 clean 诊断参照。
-- [ ] 同时有 micro 与 macro、CE、EMA 以及 Last checkpoint。
-- [ ] 固定单位 pp，明确目标评估分布及 selection objective。
-- [ ] 没有把模拟结果伪称真实 CIFAR/GPU 实验。
-- [ ] 先交第一次报告/commit，再由用户授权执行 120 轮、3–5 seeds。
+- [x] 起始工程安全初始化为Git，保存原始版本，分支 phase0-audit。
+- [x] 完整阅读任务书和所有核心代码/配置/测试/协议。
+- [x] 官方FNBench成功获取，精确SHA和实际MIT LICENSE已记录。
+- [x] 全部单测通过；实际数量/日志见 PHASE0_REPORT.md 和 evidence/。
+- [x] 独立starter与官方FedAvg组件的2-round CPU synthetic smoke通过。
+- [x] train/val互斥/覆盖；official_train与official_test源分开；mock CIFAR loader 验证访问路径。
+- [ ] **真实CIFAR内容/实际拆分与V100运行尚未验证**，未获准下载或正式训练。
+- [x] 验证噪声仅改变val view；同seed重放校验checkpoint/test predictions不变，见实际证据。
+- [x] selector严格CSV白名单，只有uniform/heterogeneous；隔离目录不含config或private_audit也可选模。
+- [x] test/clean diagnostic只能在冻结选择之后计算；包含Last及clean/test事后上界。
+- [x] macro/micro accuracy、CE、EMA、Last均实现，regret单位pp。
+- [x] synthetic图和报告有调试标注，无伪造CIFAR/GPU/创新性结论。
+- [x] V100候选安装、单seed命令、IID/独立training noise配置备妥；尚未实测。
+- [ ] 用户验收并决定是否批准下一阶段；当前仅 INCONCLUSIVE。

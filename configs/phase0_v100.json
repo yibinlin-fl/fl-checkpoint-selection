@@ -12,7 +12,7 @@
   "batch_size": 64,
   "learning_rate": 0.01,
   "momentum": 0.9,
-  "model": "resnet18_cifar",
+  "model": "fnbench_resnet18",
   "device": "cuda",
   "num_workers": 2,
   "heterogeneous_rates": [
@@ -29,6 +29,11 @@
   ],
   "validation_noise_seed": 2031,
   "ema_alpha": 0.6,
-  "output_dir": "outputs/cifar10_seed42",
-  "training_label_noise_rate": 0.2
+  "output_dir": "outputs/fnbench_cifar10_dirichlet_seed42_cleantrain",
+  "training_label_noise_rate": 0.0,
+  "backend": "fnbench",
+  "weight_decay": 0.0005,
+  "download_data": false,
+  "schedule": [],
+  "lr_decay": 0.1
 }

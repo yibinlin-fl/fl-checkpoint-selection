@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Single Phase-0 CLI; command `all` invokes train/evaluate/select/audit in order."""
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -24,11 +25,12 @@ def main():
     cfg = load_config(args.config)
     out = args.out or cfg["output_dir"]
     if args.command in ("train", "all"):
-        run_training(args.config)
+        run_training(args.config, output_dir=out)
+    frozen_cfg = json.loads((Path(out) / "config_used.json").read_text(encoding="utf-8"))
     if args.command in ("evaluate", "all"):
         run_evaluation(out)
     if args.command in ("select", "all"):
-        run_selection(out)
+        run_selection(out, ema_alpha=frozen_cfg.get("ema_alpha", 0.6))
     if args.command in ("audit", "all"):
         run_audit(out)
     if args.command in ("plot", "all"):

@@ -32,6 +32,11 @@ def make_splits(labels, config):
                               config.get("partition", "iid"),
                               config.get("dirichlet_alpha", 0.5),
                               config["seed"])
+    return holdout_clients(labels, assigned, config)
+
+
+def holdout_clients(labels, assigned, config):
+    n = len(labels)
     rng = np.random.default_rng(config["seed"] + 137)
     train, val = {}, {}
     for cid, assigned_c in enumerate(assigned):
@@ -46,6 +51,7 @@ def make_splits(labels, config):
 
 
 def validate_splits(train, val, n_samples):
+    assert set(train) == set(val), "Client keys differ"
     tr = [int(i) for group in train.values() for i in group]
     va = [int(i) for group in val.values() for i in group]
     assert set(tr).isdisjoint(va), "DATA LEAK: train/val intersection"
@@ -56,6 +62,20 @@ def validate_splits(train, val, n_samples):
     assert all(len(v) > 0 for v in val.values())
 
 
+def validate_manifest(manifest, n_samples, n_test):
+    train = {int(k): v["train_indices"] for k, v in manifest["clients"].items()}
+    val = {int(k): v["validation_indices"] for k, v in manifest["clients"].items()}
+    validate_splits(train, val, n_samples)
+    # IDs are (official source split, source index), never bare local integers.
+    tr = {("official_train", i) for v in train.values() for i in v}
+    va = {("official_train", i) for v in val.values() for i in v}
+    te = {("official_test", i) for i in range(n_test)}
+    assert tr.isdisjoint(va) and tr.isdisjoint(te) and va.isdisjoint(te)
+    assert manifest["source_namespaces"] == ["official_train", "official_test"]
+    assert manifest["n_test_independent"] == n_test
+    return train, val
+
+
 def write_manifest(output, train, val, labels, config, test_size):
     dest = Path(output)
     dest.mkdir(parents=True, exist_ok=True)
@@ -63,6 +83,8 @@ def write_manifest(output, train, val, labels, config, test_size):
         "dataset": config["dataset"], "seed": config["seed"],
         "n_train": sum(map(len, train.values())), "n_validation": sum(map(len, val.values())),
         "n_test_independent": int(test_size),
+        "source_namespaces": ["official_train", "official_test"],
+        "target_distribution": "official CIFAR-10 iid test" if config["dataset"] == "cifar10" else "SYNTHETIC DEBUG ONLY",
         "clients": {
             str(k): {
                 "train_indices": list(map(int, train[k])),
@@ -73,4 +95,5 @@ def write_manifest(output, train, val, labels, config, test_size):
         },
         "warning": "Contains sample indices / clean class hist for OFFLINE AUDIT; never pass to selectors"
     }
+    validate_manifest(manifest, len(labels), test_size)
     (dest / "splits_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")

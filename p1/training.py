@@ -13,7 +13,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from .config import load_config
-from .data import PixelDataset, load_images
+from .data import PixelDataset, load_partition, test_size
+from .artifacts import record_training
 from .models import build_model
 from .noise import flip_labels
 from .splits import make_splits, write_manifest
@@ -30,7 +31,7 @@ def set_seeds(seed):
 def git_revision():
     try:
         return subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL,
-                                       text=True).strip()
+                                       text=True, cwd=Path(__file__).resolve().parents[1]).strip()
     except (OSError, subprocess.CalledProcessError):
         return "not-a-git-checkout"
 
@@ -77,13 +78,20 @@ def local_update(global_model, images, targets, indices, cfg, device):
     return {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}, total_loss / max(1, batches)
 
 
-def run_training(config_path):
+def run_training(config_path, output_dir=None):
     cfg = load_config(config_path)
+    if output_dir is not None:
+        cfg["output_dir"] = str(output_dir)
+    if cfg.get("backend") == "fnbench":
+        from .fnbench import run_fnbench_training
+        return run_fnbench_training(cfg)
     set_seeds(cfg["seed"])
     device = torch.device(cfg.get("device", "cpu"))
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("GPU requested but CUDA unavailable. Use smoke config on CPU.")
     out = Path(cfg["output_dir"])
+    if out.exists() and any(out.iterdir()):
+        raise FileExistsError(f"Use a fresh output directory: {out}")
     ckpts = out / "checkpoints"
     ckpts.mkdir(parents=True, exist_ok=True)
     # Freeze a complete copy; never edit a running run's config halfway through.
@@ -96,10 +104,9 @@ def run_training(config_path):
         "train_accesses_validation": False, "train_accesses_official_test": False,
     }, indent=2), encoding="utf-8")
 
-    images, labels, _heldout_images, _heldout_labels = load_images(cfg)
-    # DO NOT evaluate _heldout_images/_heldout_labels in this function.
+    images, labels = load_partition(cfg, train=True)
     train_ids, val_ids = make_splits(labels, cfg)
-    write_manifest(out, train_ids, val_ids, labels, cfg, len(_heldout_labels))
+    write_manifest(out, train_ids, val_ids, labels, cfg, test_size(cfg))
     # Optional fixed train label noise, disjoint from validation noise.
     train_targets = labels.copy()
     train_noise_rate = cfg.get("training_label_noise_rate", 0.0)
@@ -123,10 +130,12 @@ def run_training(config_path):
             losses.append(loss)
         model.load_state_dict(fedavg(states, sizes))
         print(f"[train] round={rnd}/{cfg['rounds']} train_loss={np.mean(losses):.4f}", flush=True)
-        log.append({"round": rnd, "mean_client_train_loss": float(np.mean(losses))})
+        log.append({"round": rnd, "mean_client_train_loss": float(np.mean(losses)),
+                    "clients": selected, "train_sample_counts": sizes})
         if rnd % cfg["checkpoint_every"] == 0 or rnd == cfg["rounds"]:
             # Weight states only. No clean val/test info in model files.
             torch.save(model.state_dict(), ckpts / f"round_{rnd:04d}.pt")
     (out / "train_log.json").write_text(json.dumps(log, indent=2), encoding="utf-8")
+    record_training(out)
     print("Training complete; TEST SET NOT EVALUATED during training.")
     return out

@@ -1,7 +1,9 @@
 """Post-selection oracle evaluator, physically separate from the selector module."""
 import csv
+import math
 from pathlib import Path
-from .evaluation import write_csv
+from .artifacts import write_csv, verify_frozen
+from .evaluation import run_evaluation
 
 
 def read_csv(path):
@@ -11,6 +13,8 @@ def read_csv(path):
 
 def audit_regret(selections, oracle_rows):
     truth = {int(r["round"]): float(r["test_accuracy"]) for r in oracle_rows}
+    if len(truth) != len(oracle_rows) or any(not math.isfinite(v) or not 0 <= v <= 1 for v in truth.values()):
+        raise ValueError("Invalid or duplicate oracle scores")
     if not truth:
         raise ValueError("No test checkpoints")
     best = max(truth.values())
@@ -28,6 +32,8 @@ def audit_regret(selections, oracle_rows):
 
 def run_audit(out_dir):
     out = Path(out_dir)
+    verify_frozen(out)
+    run_evaluation(out, diagnostic=True)
     selections = read_csv(out / "selected_models.csv")
     oracle = read_csv(out / "private_audit" / "oracle_test.csv")
     regrets = audit_regret(selections, oracle)

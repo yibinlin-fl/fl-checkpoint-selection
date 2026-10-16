@@ -6,13 +6,16 @@ from torchvision import transforms
 
 
 class PixelDataset(Dataset):
-    def __init__(self, images, labels, augment=False):
+    def __init__(self, images, labels, augment=False, normalize=False):
         self.images = np.asarray(images, dtype=np.uint8)
         self.targets = np.asarray(labels, dtype=np.int64)
         self.transform = (transforms.Compose([
             transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
         ]) if augment else transforms.ToTensor())
+        if normalize:
+            self.transform = transforms.Compose([self.transform, transforms.Normalize(
+                [0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
     def __len__(self):
         return len(self.targets)
@@ -35,17 +38,20 @@ def make_synthetic(size, seed):
     return images, labels
 
 
-def load_images(config):
+def load_partition(config, *, train):
+    """Training/validation never instantiate or load the official test dataset."""
     name = config["dataset"]
     if name == "synthetic-debug":
-        tr_x, tr_y = make_synthetic(config.get("synthetic_train_size", 96), config["seed"])
-        te_x, te_y = make_synthetic(config.get("synthetic_test_size", 32), config["seed"] + 1)
+        size = config.get("synthetic_train_size", 96) if train else config.get("synthetic_test_size", 32)
+        return make_synthetic(size, config["seed"] + (0 if train else 1))
     elif name == "cifar10":
         from torchvision.datasets import CIFAR10
-        d0 = CIFAR10(root="data_cache", train=True, download=True)
-        d1 = CIFAR10(root="data_cache", train=False, download=True)
-        tr_x, tr_y = d0.data, np.asarray(d0.targets, dtype=np.int64)
-        te_x, te_y = d1.data, np.asarray(d1.targets, dtype=np.int64)
+        dataset = CIFAR10(root=config.get("data_root", "data_cache"), train=train,
+                          download=config.get("download_data", False))
+        return dataset.data, np.asarray(dataset.targets, dtype=np.int64)
     else:
         raise ValueError(f"Unknown dataset: {name}")
-    return tr_x, np.asarray(tr_y), te_x, np.asarray(te_y)
+
+
+def test_size(config):
+    return 10000 if config["dataset"] == "cifar10" else config.get("synthetic_test_size", 32)

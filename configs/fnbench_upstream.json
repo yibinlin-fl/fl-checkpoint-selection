@@ -1,0 +1,7 @@
+{
+  "url": "https://github.com/Sprinter1999/FNBench.git",
+  "commit": "838dff3023335c015dea07fa13dc42ca971d525d",
+  "license_file": "MIT",
+  "readme_badge": "Apache-2.0",
+  "patch": "patches/fnbench-lazy-agnews.patch"
+}

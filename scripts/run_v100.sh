@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# EXPLICIT APPROVAL REQUIRED: This script can train for 120 rounds; Codex should not auto-run it.
+# After user acceptance/authorization only. One seed, one condition, no sweep.
+if [[ "${1:-}" != "--approved-formal-run" ]]; then
+  echo "After Phase-0 acceptance and explicit authorization, pass --approved-formal-run." >&2
+  exit 2
+fi
+cd "$(dirname "$0")/.."
+python scripts/check_v100.py
+python scripts/prepare_fnbench.py
 python scripts/p1_cli.py all --config configs/phase0_v100.json
