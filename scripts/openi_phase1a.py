@@ -150,8 +150,9 @@ def main(argv=None):
         print("Phase-1A complete; upload calls returned. Remote download verification still required.")
         return 0
     except Exception as exc:
-        failed_stage = status["execution_status"]
-        status.update(execution_status="failed", analysis_status="failed" if status["training_complete"] else "not_started",
+        analysis_complete = status["analysis_status"] == "complete"
+        failed_stage = "final_publication" if analysis_complete else status["execution_status"]
+        status.update(execution_status="failed", analysis_status="complete" if analysis_complete else ("failed" if status["training_complete"] else "not_started"),
                       failed_stage=failed_stage, error_type=type(exc).__name__,
                       error_summary="Phase-1A failed; inspect sanitized stage logs. No scientific conclusion.")
         save_status()

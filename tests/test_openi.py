@@ -58,8 +58,8 @@ def test_recovery_contains_checkpoint_and_upload_failure_is_not_success(tmp_path
         publish([archive],tmp_path/"output",lambda:False)
 
 
-@pytest.mark.parametrize("fail_upload", [True, False])
-def test_openi_recovery_upload_orders_analysis_and_handles_failure(tmp_path, monkeypatch, fail_upload):
+@pytest.mark.parametrize("fail_at", [1, None, 2])
+def test_openi_recovery_upload_orders_analysis_and_handles_failure(tmp_path, monkeypatch, fail_at):
     import sys, types
     import scripts.openi_phase1a as entry
     context=SimpleNamespace(output_path=str(tmp_path/"published"),dataset_path=str(tmp_path))
@@ -68,7 +68,7 @@ def test_openi_recovery_upload_orders_analysis_and_handles_failure(tmp_path, mon
     sdk.prepare=lambda:context
     def upload():
         calls.append("upload")
-        if fail_upload and calls.count("upload")==1:
+        if calls.count("upload")==fail_at:
             raise RuntimeError("mock transport failure")
     sdk.upload_output=upload
     monkeypatch.setitem(sys.modules,"c2net",types.ModuleType("c2net"))
@@ -100,13 +100,18 @@ def test_openi_recovery_upload_orders_analysis_and_handles_failure(tmp_path, mon
     monkeypatch.setattr(entry,"package_results",pack)
     code=entry.main(["--run_id","mock_recovery_failure","--work_root",str(tmp_path/"work"),
                      "--data_source",str(tmp_path/"input.zip"),"--input_bytes","1","--input_sha256","0"*64])
-    assert code == (1 if fail_upload else 0)
+    assert code == (1 if fail_at else 0)
     assert "train" in calls
     status=json.loads((tmp_path/"work/mock_recovery_failure/p1_mock_recovery_failure_status.json").read_text())
     assert status["scientific_evidence"] is False
-    if fail_upload:
+    if fail_at == 1:
         assert "evaluate" not in calls
         assert status["execution_status"] == "failed"
+    elif fail_at == 2:
+        assert "evaluate" in calls
+        assert status["analysis_status"] == "complete"
+        assert status["execution_status"] == "failed"
+        assert status["failed_stage"] == "final_publication"
     else:
         assert calls.index("train") < calls.index("upload") < calls.index("evaluate")
         assert status["analysis_status"] == "complete"
