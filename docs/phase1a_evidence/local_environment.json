@@ -1,0 +1,39 @@
+{
+  "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 13:17:27) [MSC v.1929 64 bit (AMD64)]",
+  "executable": "D:\\anaconda3\\python.exe",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch": "2.12.0+cpu",
+  "torch_cuda_runtime": null,
+  "torch_cuda_available": false,
+  "disk": {
+    "total": 249538015232,
+    "used": 185856937984,
+    "free": 63681077248
+  },
+  "packages": {
+    "torchvision": "0.27.0",
+    "numpy": "1.26.4",
+    "pytest": "7.4.4",
+    "Pillow": "10.4.0",
+    "matplotlib": "3.9.2",
+    "scikit-learn": "1.5.1",
+    "tqdm": "4.66.5"
+  },
+  "git": {
+    "exit_code": 0,
+    "stdout": "9d916a6e425b7bb10d8c9b0cefccf849755fbefa\n",
+    "stderr": ""
+  },
+  "nvidia_smi": {
+    "exit_code": 0,
+    "stdout": "Sat Oct 17 01:15:29 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 566.07                 Driver Version: 566.07         CUDA Version: 12.7     |\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 3050 ...  WDDM  |   00000000:01:00.0  On |                  N/A |\n| N/A   43C    P8              7W /   70W |     970MiB /   4096MiB |      6%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n                                                                                         \n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n+-----------------------------------------------------------------------------------------+\n",
+    "stderr": ""
+  },
+  "memory": {
+    "total": 16905818112,
+    "available": 3882278912,
+    "percent": 77.0,
+    "used": 13023539200,
+    "free": 3882278912
+  }
+}

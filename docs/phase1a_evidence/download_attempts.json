@@ -1,0 +1,24 @@
+{
+  "toronto_direct": {
+    "status": "interrupted after slow transfer",
+    "observed_bytes_per_second_approx": 50000,
+    "partial_archive_retained": true
+  },
+  "toronto_ranges": {
+    "status": "failed",
+    "error": "urllib.error.URLError: [SSL: UNEXPECTED_EOF_WHILE_READING]",
+    "partial_parts_retained": true
+  },
+  "paddle_same_official_archive": {
+    "transport_source": "paddle",
+    "url": "https://dataset.bj.bcebos.com/cifar/cifar-10-python.tar.gz",
+    "official_url": "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz",
+    "official_md5": "c58f30108f718f92721af3b95e74349a",
+    "archive_md5_passed": true,
+    "archive_sha256": "6d958be074577803d12ecdefd02955f39262c83c16fe9348329d7fe0b5c001ce",
+    "archive_bytes": 170498071,
+    "n_official_train": 50000,
+    "data_content_modified": false,
+    "model_evaluation_performed": false
+  }
+}

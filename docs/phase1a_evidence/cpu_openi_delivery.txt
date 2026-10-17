@@ -1,0 +1,17 @@
+D:\anaconda3\Lib\site-packages\torch\utils\data\dataloader.py:752: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+idx: 0, datasize 24
+idx: 1, datasize 24
+idx: 2, datasize 24
+idx: 3, datasize 24
+[FNBench FedAvg / synthetic-debug] round=1 loss=2.459915
+[FNBench FedAvg / synthetic-debug] round=2 loss=2.415407
+[offline-evaluate] round=1 completed
+[offline-evaluate] round=2 completed
+Noisy validation only; official test not loaded.
+Selection complete. This module did NOT read private_audit files.
+[offline-evaluate] round=1 completed
+[offline-evaluate] round=2 completed
+Offline diagnostic audit complete.
+Audited decision table saved. Test oracle used AFTER all choices are fixed.
+Saved validation_accuracy.png

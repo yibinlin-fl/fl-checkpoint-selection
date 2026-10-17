@@ -1,0 +1,7 @@
+{
+  "comparison": "SHA256 exact uint8 pixels (not a semantic near-duplicate detector)",
+  "official_train_internal_duplicate_pairs": [],
+  "train_vs_validation_exact_duplicate_pairs": [],
+  "official_train_vs_test_exact_duplicates": [],
+  "policy": "Report benchmark duplicates; no data deletion, reassignment or threshold tuning"
+}

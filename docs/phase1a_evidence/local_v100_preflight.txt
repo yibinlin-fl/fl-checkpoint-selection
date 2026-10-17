@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "D:\AVibCodingProjects\P1_FL_Checkpoint_Selection_Starter_20261017\P1-FL-Checkpoint-Selection\scripts\run_phase1a.py", line 57, in <module>
+    main()
+  File "D:\AVibCodingProjects\P1_FL_Checkpoint_Selection_Starter_20261017\P1-FL-Checkpoint-Selection\scripts\run_phase1a.py", line 26, in main
+    gpu = require_v100()  # Fail before download, expensive training or output creation.
+          ^^^^^^^^^^^^^^
+  File "D:\AVibCodingProjects\P1_FL_Checkpoint_Selection_Starter_20261017\P1-FL-Checkpoint-Selection\p1\phase1a.py", line 32, in require_v100
+    raise RuntimeError("V100 unavailable: installed PyTorch has no usable CUDA GPU")
+RuntimeError: V100 unavailable: installed PyTorch has no usable CUDA GPU

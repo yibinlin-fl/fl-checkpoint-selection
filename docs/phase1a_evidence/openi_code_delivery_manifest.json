@@ -1,0 +1,10 @@
+{
+  "schema": "openi-explicit-file-manifest-v1",
+  "files": [
+    {
+      "path": "D:\\AVibCodingProjects\\P1_FL_Checkpoint_Selection_Starter_20261017\\P1-FL-Checkpoint-Selection\\outputs\\openi_packages\\p1_phase1a_code_delivery.zip",
+      "bytes": 316496,
+      "sha256": "fcea182f78d71c2411812442273444caa3ecf4ca6f93a6fc8cd3e097d63c3851"
+    }
+  ]
+}
