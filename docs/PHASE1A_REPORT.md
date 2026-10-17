@@ -105,3 +105,7 @@ bash scripts/run_v100.sh --approved-formal-run
 
 ## 尚未完成与下一步
 OpenI V100镜像/依赖安装和c2net真实上下文、2轮真实训练、checkpoint加载、三个真实验证场景、冻结后test/regret、真实GPU重放与成本均待云端执行。当前只能确认真实输入和本地工程准备有效，不能宣称Phase-1A通过或P1链条成立。等待仓库/镜像信息及可执行的OpenI操作入口；不启动Phase-1B。
+
+## GitHub 后续同步更新（2026-10-17）
+
+上文“尚未配置远端/未推送”为本地报告生成时的状态。随后用户提供 https://github.com/yibinlin-fl/fl-checkpoint-selection 并明确确认按当前公开仓库上传。main已推送，首次远端核验SHA为 `68e8172629b8fe83c221a380a164aa05c15dc404`。此次仅上传Git跟踪的代码、文档与轻量审计证据，没有上传data_cache/outputs/vendor及大型checkpoint；也没有启动OpenI或正式训练。OpenI目标数据集与镜像等未验证项保持不变。

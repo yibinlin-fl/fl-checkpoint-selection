@@ -46,4 +46,4 @@ python scripts/p1_cli.py all --config configs/phase0_smoke.json --out outputs/my
 正式 CIFAR 下载和 V100 训练需后续用户授权，**本次到 Phase-0 验收为止**。
 
 ## 最新 Phase-1A / OpenI 状态
-真实 CIFAR 数据已完成本地审计；OpenI 云端尚未运行。当前交接见 `docs/HANDOFF.md`，完整报告 `docs/PHASE1A_REPORT.md`，网页填写见 `docs/OPENI_PHASE1A_LAUNCH_CARD.md`。当前代码包已固定提交20d48d5，远端仓库和镜像仍待确认。
+真实 CIFAR 数据已完成本地审计；OpenI 云端尚未运行。当前交接见 `docs/HANDOFF.md`，完整报告 `docs/PHASE1A_REPORT.md`，网页填写见 `docs/OPENI_PHASE1A_LAUNCH_CARD.md`。当前代码包已固定提交20d48d5，代码已上传至GitHub的 `yibinlin-fl/fl-checkpoint-selection`（main）；OpenI代码/数据仓库和镜像仍待确认。

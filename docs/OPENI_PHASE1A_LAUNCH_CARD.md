@@ -3,7 +3,7 @@
 任务唯一标识：`p1-phase1a-s42-r2-20261017-v1`。角色：真实 CIFAR-10 工程 smoke，单 seed42、两轮全局 FedAvg。Phase-1A 训练获授权；120轮/多seed未授权。私有数据集上传、代码推送、创建网页任务未执行，目标仓库与镜像未提供。
 
 ## 代码身份
-分支 `phase1a-data-v100`；可执行代码提交 `20d48d5f42ebc10de0cb6b1a36aed89c98cc6d2b`。GitHub/OpenI远端均未创建/配置，没有push或fetch远端状态。OpenI选用的仓库/分支/commit：**待核验**。不将本地提交冒称已上传。可以使用OpenI自己的代码仓库，不依赖GitHub。
+分支 `phase1a-data-v100`；可执行代码提交 `20d48d5f42ebc10de0cb6b1a36aed89c98cc6d2b`。GitHub已按用户确认公开上传到 https://github.com/yibinlin-fl/fl-checkpoint-selection ，分支main；已核验基线提交 `68e8172629b8fe83c221a380a164aa05c15dc404`。OpenI代码仓库及其实际commit仍待核验，不能把GitHub上传当作OpenI同步完成。后续文档更新不改变代码包对应的可执行实现。
 
 可审阅代码ZIP：
 `D:/AVibCodingProjects/P1_FL_Checkpoint_Selection_Starter_20261017/P1-FL-Checkpoint-Selection/outputs/openi_packages/p1_phase1a_code_delivery.zip`
